@@ -18,8 +18,22 @@ function AuthRegister() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+ 
+  const isFormValid = () => {
+    return registerFormControls.every((control) => formData[control.name]);
+  };
+
   function onSubmit(event) {
     event.preventDefault();
+
+    if (!isFormValid()) {
+      toast({
+        title: "Please fill out all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
     dispatch(registerUser(formData)).then((data) => {
       if (data?.payload?.success) {
         toast({
@@ -34,8 +48,6 @@ function AuthRegister() {
       }
     });
   }
-
-  console.log(formData);
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">

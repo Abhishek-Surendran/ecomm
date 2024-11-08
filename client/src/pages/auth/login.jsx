@@ -16,8 +16,21 @@ function AuthLogin() {
   const dispatch = useDispatch();
   const { toast } = useToast();
 
+  
+  const isFormValid = () => {
+    return loginFormControls.every((control) => formData[control.name]);
+  };
+
   function onSubmit(event) {
     event.preventDefault();
+
+    if (!isFormValid()) {
+      toast({
+        title: "Please fill out all fields",
+        variant: "destructive",
+      });
+      return;
+    }
 
     dispatch(loginUser(formData)).then((data) => {
       if (data?.payload?.success) {
