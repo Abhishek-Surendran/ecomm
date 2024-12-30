@@ -11,6 +11,7 @@ const storage = new multer.memoryStorage();
 
 async function imageUploadUtil(file) {
   const result = await cloudinary.uploader.upload(file, {
+    folder: "ecomm",
     resource_type: "auto",
   });
 
