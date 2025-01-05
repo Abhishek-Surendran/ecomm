@@ -33,15 +33,18 @@ const addToCart = async (req, res) => {
 
     if (findCurrentProductIndex === -1) {
       cart.items.push({ productId, quantity });
+      await cart.save();
+      res.status(200).json({
+        success: true,
+        data: cart,
+      });
     } else {
-      cart.items[findCurrentProductIndex].quantity += quantity;
+      await cart.save();
+      res.status(403).json({
+        success: false,
+        data: cart,
+      });
     }
-
-    await cart.save();
-    res.status(200).json({
-      success: true,
-      data: cart,
-    });
   } catch (error) {
     console.log(error);
     res.status(500).json({

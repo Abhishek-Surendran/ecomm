@@ -116,6 +116,11 @@ function ShoppingListing() {
         toast({
           title: "Product is added to cart",
         });
+      }else{
+        dispatch(fetchCartItems(user?.id));
+        toast({
+          title: "Product is already in cart",
+        });
       }
     });
   }
