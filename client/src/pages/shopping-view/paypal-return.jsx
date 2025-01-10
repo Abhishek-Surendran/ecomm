@@ -7,29 +7,28 @@ import { useLocation } from "react-router-dom";
 function PaypalReturnPage() {
   const dispatch = useDispatch();
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const paymentId = params.get("paymentId");
-  const payerId = params.get("PayerID");
+  
 
   useEffect(() => {
-    if (paymentId && payerId) {
-      const orderId = JSON.parse(sessionStorage.getItem("currentOrderId"));
+    const orderId = JSON.parse(sessionStorage.getItem("currentOrderId"));
 
-      dispatch(capturePayment({ paymentId, payerId, orderId })).then((data) => {
+      dispatch(capturePayment({orderId })).then((data) => {
+        console.log(data.payload, "session data");
         if (data?.payload?.success) {
           sessionStorage.removeItem("currentOrderId");
           window.location.href = "/shop/payment-success";
         }
       });
-    }
-  }, [paymentId, payerId, dispatch]);
+  }, [dispatch]);
 
   return (
-    <Card>
+    <div className="flex items-center justify-center h-screen">
+      <Card>
       <CardHeader>
-        <CardTitle>Processing Payment...Please wait!</CardTitle>
+        <CardTitle>Confirming Payment...Please wait!</CardTitle>
       </CardHeader>
     </Card>
+    </div>
   );
 }
 

@@ -1,11 +1,13 @@
-const paypal = require("../../helpers/paypal");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Order = require("../../models/Order");
 const Cart = require("../../models/Cart");
 const Product = require("../../models/Product");
 
+const client_domain = process.env.CLIENT_BASE_URL;
+
 const createOrder = async (req, res) => {
   try {
-    const {
+    let {
       userId,
       cartItems,
       addressInfo,
@@ -20,72 +22,51 @@ const createOrder = async (req, res) => {
       cartId,
     } = req.body;
 
-    const create_payment_json = {
-      intent: "sale",
-      payer: {
-        payment_method: "paypal",
-      },
-      redirect_urls: {
-        return_url: `${process.env.CLIENT_BASE_URL}/api/shop/paypal-return`,
-        cancel_url: `${process.env.CLIENT_BASE_URL}/api/shop/paypal-cancel`,
-      },
-      transactions: [
-        {
-          item_list: {
-            items: cartItems.map((item) => ({
-              name: item.title,
-              sku: item.productId,
-              price: item.price.toFixed(2),
-              currency: "USD",
-              quantity: item.quantity,
-            })),
+    const lineItems = cartItems.map((item) => ({
+      price_data: {
+          currency: "inr",
+          product_data: {
+              name:  item.title,
+              images: [item.image],
           },
-          amount: {
-            currency: "USD",
-            total: totalAmount.toFixed(2),
-          },
-          description: "description",
-        },
-      ],
-    };
+          unit_amount: Math.round(item.price * 100),
+      },
+      quantity: item.quantity,
+  }));
 
-    paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
-      if (error) {
-        console.log(error);
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: lineItems,
+    mode: "payment",
+    success_url: `${client_domain}/shop/payment-return`,
+    cancel_url: `${client_domain}/shop/payment-cancel`,
+});
 
-        return res.status(500).json({
-          success: false,
-          message: "Error while creating paypal payment",
-        });
-      } else {
-        const newlyCreatedOrder = new Order({
-          userId,
-          cartId,
-          cartItems,
-          addressInfo,
-          orderStatus,
-          paymentMethod,
-          paymentStatus,
-          totalAmount,
-          orderDate,
-          orderUpdateDate,
-          paymentId,
-          payerId,
-        });
+paymentId = session.id;
 
-        await newlyCreatedOrder.save();
+const newlyCreatedOrder = new Order({
+  userId,
+  cartId,
+  cartItems,
+  addressInfo,
+  orderStatus,
+  paymentMethod,
+  paymentStatus,
+  totalAmount,
+  orderDate,
+  orderUpdateDate,
+  paymentId,
+  payerId,
+});
 
-        const approvalURL = paymentInfo.links.find(
-          (link) => link.rel === "approval_url"
-        ).href;
+await newlyCreatedOrder.save();
 
-        res.status(201).json({
-          success: true,
-          approvalURL,
-          orderId: newlyCreatedOrder._id,
-        });
-      }
-    });
+res.status(201).json({
+  success: true,
+  sessionId:session.id,
+  orderId: newlyCreatedOrder._id,
+});
+   
   } catch (e) {
     console.log(e);
     res.status(500).json({
@@ -97,7 +78,7 @@ const createOrder = async (req, res) => {
 
 const capturePayment = async (req, res) => {
   try {
-    const { paymentId, payerId, orderId } = req.body;
+    const { orderId } = req.body;
 
     let order = await Order.findById(orderId);
 
@@ -110,8 +91,9 @@ const capturePayment = async (req, res) => {
 
     order.paymentStatus = "paid";
     order.orderStatus = "confirmed";
-    order.paymentId = paymentId;
-    order.payerId = payerId;
+    
+    const sessionId = order.paymentId;
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     for (let item of order.cartItems) {
       let product = await Product.findById(item.productId);
@@ -137,6 +119,7 @@ const capturePayment = async (req, res) => {
       success: true,
       message: "Order confirmed",
       data: order,
+      sessionDetails: session,
     });
   } catch (e) {
     console.log(e);

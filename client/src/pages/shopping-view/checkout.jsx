@@ -7,15 +7,17 @@ import { useState } from "react";
 import { createNewOrder } from "@/store/shop/order-slice";
 import { Navigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import {loadStripe} from '@stripe/stripe-js';
 
 function ShoppingCheckout() {
   const { cartItems } = useSelector((state) => state.shopCart);
   const { user } = useSelector((state) => state.auth);
-  const { approvalURL } = useSelector((state) => state.shopOrder);
+  const { sessionId } = useSelector((state) => state.shopOrder);
   const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
   const [isPaymentStart, setIsPaymemntStart] = useState(false);
   const dispatch = useDispatch();
   const { toast } = useToast();
+  const stripePromise =  loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
   console.log(currentSelectedAddress, "cartItems");
 
@@ -32,7 +34,7 @@ function ShoppingCheckout() {
         )
       : 0;
 
-  function handleInitiatePaypalPayment() {
+  function handleInitiatePayment() {
     if (cartItems.length === 0) {
       toast({
         title: "Your cart is empty. Please add items to proceed",
@@ -72,7 +74,7 @@ function ShoppingCheckout() {
         notes: currentSelectedAddress?.notes,
       },
       orderStatus: "pending",
-      paymentMethod: "paypal",
+      paymentMethod: "stripe",
       paymentStatus: "pending",
       totalAmount: totalCartAmount,
       orderDate: new Date(),
@@ -81,18 +83,34 @@ function ShoppingCheckout() {
       payerId: "",
     };
 
-    dispatch(createNewOrder(orderData)).then((data) => {
+    dispatch(createNewOrder(orderData)).then(async (data) => {
       console.log(data, "sangam");
+    
       if (data?.payload?.success) {
         setIsPaymemntStart(true);
+    
+        const sessionId = data.payload?.sessionId;
+    
+        try {
+          const stripe = await stripePromise;
+    
+          // Redirect to Stripe Checkout page
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: sessionId,
+          });
+    
+          if (error) {
+            console.error("Stripe Checkout Error:", error);
+          }
+        } catch (err) {
+          console.error("Error loading Stripe:", err);
+        }
       } else {
         setIsPaymemntStart(false);
       }
+    
+      console.log(data.payload?.sessionId);
     });
-  }
-
-  if (approvalURL) {
-    window.location.href = approvalURL;
   }
 
   return (
@@ -118,10 +136,8 @@ function ShoppingCheckout() {
             </div>
           </div>
           <div className="mt-4 w-full">
-            <Button onClick={handleInitiatePaypalPayment} className="w-full">
-              {isPaymentStart
-                ? "Processing Paypal Payment..."
-                : "Checkout with Paypal"}
+            <Button onClick={handleInitiatePayment} className="w-full">
+              {isPaymentStart ? "Processing Payment..." : "Checkout"}
             </Button>
           </div>
         </div>
