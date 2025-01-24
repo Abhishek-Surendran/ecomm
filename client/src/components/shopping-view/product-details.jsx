@@ -1,7 +1,7 @@
-import { StarIcon } from "lucide-react";
+import { StarIcon, Trash } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent } from "../ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +11,7 @@ import { setProductDetails } from "@/store/shop/products-slice";
 import { Label } from "../ui/label";
 import StarRatingComponent from "../common/star-rating";
 import { useEffect, useState } from "react";
-import { addReview, getReviews } from "@/store/shop/review-slice";
+import { addReview, getReviews, deleteReviews } from "@/store/shop/review-slice";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [reviewMsg, setReviewMsg] = useState("");
@@ -86,7 +86,34 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         setReviewMsg("");
         dispatch(getReviews(productDetails?._id));
         toast({
-          title: "Review added successfully!",
+          title: data.payload.message,
+        });
+      }else{
+        toast({
+          title: data.payload.message,
+          variant: "destructive",
+        });
+      }
+    });
+  }
+
+  function handleDeleteReview() {
+    const productId= productDetails?._id;
+    const userId= user?.id
+    dispatch(
+      deleteReviews(
+        { productId, userId }
+      )
+    ).then((data) => {
+      if (data.payload.success) {
+        dispatch(getReviews(productDetails?._id));
+        toast({
+          title: data.payload.message,
+        });
+      }else{
+        toast({
+          title: data.payload.message,
+          variant: "destructive",
         });
       }
     });
@@ -106,6 +133,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
+      <DialogTitle className="sr-only">{productDetails?.title}</DialogTitle>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
         <div className="relative overflow-hidden rounded-lg">
           <img
@@ -186,6 +214,13 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                       <p className="text-muted-foreground">
                         {reviewItem.reviewMessage}
                       </p>
+                    </div>
+                    <div className="ml-auto mr-2">
+                      <Trash
+                        onClick={handleDeleteReview}
+                        className="cursor-pointer mt-1 border border-muted-foreground rounded-full p-1"
+                        size={30}
+                      />
                     </div>
                   </div>
                 ))

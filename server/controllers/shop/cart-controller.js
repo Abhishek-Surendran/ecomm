@@ -37,12 +37,14 @@ const addToCart = async (req, res) => {
       res.status(200).json({
         success: true,
         data: cart,
+        message: "Product added to cart successfully!",
       });
     } else {
       await cart.save();
-      res.status(403).json({
+      res.status(200).json({
         success: false,
         data: cart,
+        message: "Product already in cart!",
       });
     }
   } catch (error) {

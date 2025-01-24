@@ -14,7 +14,7 @@ const addProductReview = async (req, res) => {
     });
 
     if (!order) {
-      return res.status(403).json({
+      return res.status(200).json({
         success: false,
         message: "You need to purchase product to review it.",
       });
@@ -26,7 +26,7 @@ const addProductReview = async (req, res) => {
     });
 
     if (checkExistinfReview) {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         message: "You already reviewed this product!",
       });
@@ -53,6 +53,7 @@ const addProductReview = async (req, res) => {
     res.status(201).json({
       success: true,
       data: newReview,
+      message: "Review added successfully!",
     });
   } catch (e) {
     console.log(e);
@@ -62,6 +63,39 @@ const addProductReview = async (req, res) => {
     });
   }
 };
+
+
+const deleteProductReview = async (req, res) => {
+  try {
+    const { productId, userId } = req.params;
+    console.log(productId, "====productId", userId, "====userId");
+
+    const findReview = await ProductReview.findOneAndDelete({
+      productId,
+      userId,
+    });
+
+    if (!findReview) {
+      return res.status(200).json({
+        success: false,
+        message: "Review not found",
+      });
+    }
+
+    
+    res.status(201).json({
+      success: true,
+      message: "Review deleted successfully!",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      success: false,
+      message: "Error",
+    });
+  }
+};
+
 
 const getProductReviews = async (req, res) => {
   try {
@@ -81,4 +115,4 @@ const getProductReviews = async (req, res) => {
   }
 };
 
-module.exports = { addProductReview, getProductReviews };
+module.exports = { addProductReview, getProductReviews, deleteProductReview };

@@ -26,6 +26,19 @@ export const getReviews = createAsyncThunk("/order/getReviews", async (id) => {
   return response.data;
 });
 
+export const deleteReviews = createAsyncThunk(
+  "/order/deleteReviews",
+  async ({ productId, userId }) => {
+    console.log("Product ID:", productId, "User ID:", userId);
+    const response = await axios.delete(
+      `${
+        import.meta.env.VITE_API_URL
+      }/api/shop/review/delete/${productId}/${userId}`
+    );
+    return response.data;
+  }
+);
+
 const reviewSlice = createSlice({
   name: "reviewSlice",
   initialState,
