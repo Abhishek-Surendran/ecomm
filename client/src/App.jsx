@@ -22,6 +22,10 @@ import PaypalReturnPage from "./pages/shopping-view/paypal-return";
 import PaymentSuccessPage from "./pages/shopping-view/payment-success";
 import PaymentCancelPage from "./pages/shopping-view/payment-cancel";
 import SearchProducts from "./pages/shopping-view/search";
+import SellerLayout from "./components/seller-view/layout";
+import SellerProducts from "./pages/seller-view/products";
+import SellerOrders from "./pages/seller-view/orders";
+
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -36,7 +40,6 @@ function App() {
 
   if (isLoading) return <Skeleton className="w-[800] bg-black h-[600px]" />;
 
-  console.log(isLoading, user);
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
@@ -73,6 +76,14 @@ function App() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
         </Route>
+        <Route path="/seller" element={
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+              <SellerLayout />
+            </CheckAuth>
+          }>
+            <Route path="products" element={<SellerProducts />} />
+            <Route path="orders" element={<SellerOrders />} />
+          </Route>
         <Route
           path="/shop"
           element={

@@ -1,6 +1,13 @@
+import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 
-function AdminProductTile({ product }) {
+function SellerProductTile({
+  product,
+  setFormData,
+  setOpenCreateProductsDialog,
+  setCurrentEditedId,
+  handleDelete,
+}) {
   return (
     <Card className="w-full max-w-sm mx-auto">
       <div>
@@ -26,20 +33,24 @@ function AdminProductTile({ product }) {
             ) : null}
           </div>
           <div className="flex justify-between items-center mb-2">
-            <span className="text-lg font-semibold text-primary">
-              Total Stock:
-            </span>{" "}
-            <span className="text-lg font-semibold text-primary">
-              {product?.totalStock}
-            </span>
-          </div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-lg font-semibold text-primary">Seller:</span> <span className="text-lg font-semibold text-primary">{product?.sellerName}</span>
+            <span className="text-lg font-semibold text-primary">Total Stock:</span> <span className="text-lg font-semibold text-primary">{product?.totalStock}</span>
           </div>
         </CardContent>
+        <CardFooter className="flex justify-between items-center">
+          <Button
+            onClick={() => {
+              setOpenCreateProductsDialog(true);
+              setCurrentEditedId(product?._id);
+              setFormData(product);
+            }}
+          >
+            Edit
+          </Button>
+          <Button onClick={() => handleDelete(product?._id)}>Delete</Button>
+        </CardFooter>
       </div>
     </Card>
   );
 }
 
-export default AdminProductTile;
+export default SellerProductTile

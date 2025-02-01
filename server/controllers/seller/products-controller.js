@@ -34,9 +34,11 @@ const addProduct = async (req, res) => {
       salePrice,
       totalStock,
       averageReview,
+      sellerId,
+      sellerName,
     } = req.body;
 
-    console.log(averageReview, "averageReview");
+    
 
     const newlyCreatedProduct = new Product({
       image,
@@ -48,6 +50,8 @@ const addProduct = async (req, res) => {
       salePrice,
       totalStock,
       averageReview,
+      sellerId,
+      sellerName,
     });
 
     await newlyCreatedProduct.save();
@@ -65,10 +69,10 @@ const addProduct = async (req, res) => {
 };
 
 //fetch all products
-
-const fetchAllProducts = async (req, res) => {
+const fetchAllMyProducts = async (req, res) => {
   try {
-    const listOfProducts = await Product.find({});
+    const { sellerId } = req.params;
+    const listOfProducts = await Product.find({ sellerId: sellerId });
     res.status(200).json({
       success: true,
       data: listOfProducts,
@@ -96,6 +100,8 @@ const editProduct = async (req, res) => {
       salePrice,
       totalStock,
       averageReview,
+      sellerId,
+      sellerName,
     } = req.body;
 
     let findProduct = await Product.findById(id);
@@ -158,7 +164,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   handleImageUpload,
   addProduct,
-  fetchAllProducts,
+  fetchAllMyProducts,
   editProduct,
   deleteProduct,
 };

@@ -11,12 +11,17 @@ import shopSearchSlice from "./shop/search-slice";
 import shopReviewSlice from "./shop/review-slice";
 import commonFeatureSlice from "./common-slice";
 
+
+import sellerProductsSlice from "./seller/products-slice";
+
 const store = configureStore({
   reducer: {
     auth: authReducer,
 
     adminProducts: adminProductsSlice,
     adminOrder: adminOrderSlice,
+
+    sellerProducts: sellerProductsSlice,
 
     shopProducts: shopProductsSlice,
     shopCart: shopCartSlice,
