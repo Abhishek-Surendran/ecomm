@@ -106,7 +106,7 @@ function SellerProducts() {
     dispatch(fetchAllMyProducts({ sellerId }));
   }, [dispatch]);
 
-  console.log(sellerProductList, "====sellerProductList");
+
 
   return (
     <Fragment>

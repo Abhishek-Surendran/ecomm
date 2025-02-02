@@ -10,7 +10,7 @@ const initialState = {
 export const fetchAllFilteredProducts = createAsyncThunk(
   "/products/fetchAllProducts",
   async ({ filterParams, sortParams }) => {
-    console.log(fetchAllFilteredProducts, "fetchAllFilteredProducts");
+    
 
     const query = new URLSearchParams({
       ...filterParams,
@@ -21,7 +21,7 @@ export const fetchAllFilteredProducts = createAsyncThunk(
       `${import.meta.env.VITE_API_URL}/api/shop/products/get?${query}`
     );
 
-    console.log(result);
+    
 
     return result?.data;
   }

@@ -9,6 +9,7 @@ const adminProductsRouter = require("./routes/admin/products-routes");
 const adminOrderRouter = require("./routes/admin/order-routes");
 
 const sellerProductsRouter = require("./routes/seller/products-routes");
+const sellerOrderRouter = require("./routes/seller/order-routes");
 
 const shopProductsRouter = require("./routes/shop/products-routes");
 const shopCartRouter = require("./routes/shop/cart-routes");
@@ -48,6 +49,7 @@ app.use("/api/admin/orders", adminOrderRouter);
 
 
 app.use("/api/seller/products", sellerProductsRouter);
+app.use("/api/seller/orders", sellerOrderRouter);
 
 
 app.use("/api/shop/products", shopProductsRouter);

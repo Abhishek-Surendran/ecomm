@@ -68,7 +68,6 @@ const addProductReview = async (req, res) => {
 const deleteProductReview = async (req, res) => {
   try {
     const { productId, userId } = req.params;
-    console.log(productId, "====productId", userId, "====userId");
 
     const findReview = await ProductReview.findOneAndDelete({
       productId,

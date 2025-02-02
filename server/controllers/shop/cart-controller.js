@@ -69,7 +69,7 @@ const fetchCartItems = async (req, res) => {
 
     const cart = await Cart.findOne({ userId }).populate({
       path: "items.productId",
-      select: "image title price salePrice",
+      select: "image title price salePrice sellerId sellerName",
     });
 
     if (!cart) {
@@ -94,6 +94,8 @@ const fetchCartItems = async (req, res) => {
       title: item.productId.title,
       price: item.productId.price,
       salePrice: item.productId.salePrice,
+      sellerId: item.productId.sellerId,
+      sellerName: item.productId.sellerName,
       quantity: item.quantity,
     }));
 

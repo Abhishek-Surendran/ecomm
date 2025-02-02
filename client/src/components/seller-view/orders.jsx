@@ -10,27 +10,27 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import ShoppingOrderDetailsView from "./order-details";
+import SellerOrdersDetailsView from "./order-details";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getAllOrdersByUserId,
-  getOrderDetails,
+  getAllOrdersBySellerId,
+  getSellerOrderDetails,
   resetOrderDetails,
-} from "@/store/shop/order-slice";
+} from "@/store/seller/order-slice";
 import { Badge } from "../ui/badge";
 
-function ShoppingOrders() {
+function SellerOrdersView() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { orderList, orderDetails } = useSelector((state) => state.shopOrder);
+  const { orderList, orderDetails } = useSelector((state) => state.sellerOrder);
 
   function handleFetchOrderDetails(getId) {
-    dispatch(getOrderDetails(getId));
-  }
+      dispatch(getSellerOrderDetails(getId));
+    }
 
   useEffect(() => {
-    dispatch(getAllOrdersByUserId(user?.id));
+    dispatch(getAllOrdersBySellerId(user?.id));
   }, [dispatch]);
 
   useEffect(() => {
@@ -38,10 +38,11 @@ function ShoppingOrders() {
   }, [orderDetails]);
 
 
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Order History</CardTitle>
+        <CardTitle>All Orders</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
@@ -91,7 +92,7 @@ function ShoppingOrders() {
                         >
                           View Details
                         </Button>
-                        <ShoppingOrderDetailsView orderDetails={orderDetails} />
+                        <SellerOrdersDetailsView orderDetails={orderDetails} />
                       </Dialog>
                     </TableCell>
                   </TableRow>
@@ -104,4 +105,4 @@ function ShoppingOrders() {
   );
 }
 
-export default ShoppingOrders;
+export default SellerOrdersView;

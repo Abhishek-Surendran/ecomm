@@ -19,7 +19,6 @@ function ShoppingCheckout() {
   const { toast } = useToast();
   const stripePromise =  loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-  console.log(currentSelectedAddress, "cartItems");
 
   const totalCartAmount =
     cartItems && cartItems.items && cartItems.items.length > 0
@@ -35,7 +34,7 @@ function ShoppingCheckout() {
       : 0;
 
   function handleInitiatePayment() {
-    if (cartItems.length === 0) {
+    if (cartItems.items.length === 0) {
       toast({
         title: "Your cart is empty. Please add items to proceed",
         variant: "destructive",
@@ -63,6 +62,8 @@ function ShoppingCheckout() {
           singleCartItem?.salePrice > 0
             ? singleCartItem?.salePrice
             : singleCartItem?.price,
+        sellerId: singleCartItem?.sellerId,
+        sellerName: singleCartItem?.sellerName,
         quantity: singleCartItem?.quantity,
       })),
       addressInfo: {
@@ -84,7 +85,7 @@ function ShoppingCheckout() {
     };
 
     dispatch(createNewOrder(orderData)).then(async (data) => {
-      console.log(data, "sangam");
+      
     
       if (data?.payload?.success) {
         setIsPaymemntStart(true);
@@ -109,9 +110,11 @@ function ShoppingCheckout() {
         setIsPaymemntStart(false);
       }
     
-      console.log(data.payload?.sessionId);
+      
     });
   }
+
+  
 
   return (
     <div className="flex flex-col">
