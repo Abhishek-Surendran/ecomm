@@ -9,6 +9,7 @@ const createOrder = async (req, res) => {
   try {
     let {
       userId,
+      userName,
       cartItems,
       addressInfo,
       orderStatus,
@@ -46,6 +47,7 @@ paymentId = session.id;
 
 const newlyCreatedOrder = new Order({
   userId,
+  userName,
   cartId,
   cartItems,
   addressInfo,
