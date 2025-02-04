@@ -1,4 +1,10 @@
-import { LogOut, Menu, ShoppingCart, UserCog, SquareChevronUp } from "lucide-react";
+import {
+  LogOut,
+  Menu,
+  ShoppingCart,
+  UserCog,
+  SquareChevronUp,
+} from "lucide-react";
 import {
   Link,
   useLocation,
@@ -81,8 +87,6 @@ function HeaderRightContent() {
     dispatch(fetchCartItems(user?.id));
   }, [dispatch]);
 
-
-
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
@@ -151,9 +155,11 @@ function ShoppingHeader() {
               <span className="sr-only">Toggle header menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-full max-w-xs">
-            <MenuItems />
-            <HeaderRightContent />
+          <SheetContent side="right" className="w-full max-w-xs">
+            <div className="flex flex-col gap-4">
+              <MenuItems />
+              <HeaderRightContent />
+            </div>
           </SheetContent>
         </Sheet>
         <div className="hidden lg:block">

@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import UserCartItemsContent from "./cart-items-content";
+import { useToast } from "../ui/use-toast";
 
 function UserCartWrapper({ cartItems, setOpenCartSheet }) {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const totalCartAmount =
     cartItems && cartItems.length > 0
@@ -37,8 +39,15 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
       </div>
       <Button
         onClick={() => {
-          navigate("/shop/checkout");
-          setOpenCartSheet(false);
+          if (cartItems.length > 0) {
+            setOpenCartSheet(false);
+            navigate("/shop/checkout");
+          } else {
+            toast({
+              title: "Your cart is empty. Please add items to proceed",
+              variant: "destructive",
+            });
+          }
         }}
         className="w-full mt-6"
       >
