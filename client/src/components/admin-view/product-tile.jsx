@@ -1,4 +1,5 @@
-import { Card, CardContent, CardFooter } from "../ui/card";
+import { Card, CardContent,  } from "../ui/card";
+import { Separator } from "../ui/separator";
 
 function AdminProductTile({ product }) {
   return (
@@ -25,6 +26,7 @@ function AdminProductTile({ product }) {
               <span className="text-lg font-bold">${product?.salePrice}</span>
             ) : null}
           </div>
+          <Separator className="my-4" />
           <div className="flex justify-between items-center mb-2">
             <span className="text-lg font-semibold text-primary">
               Total Stock:

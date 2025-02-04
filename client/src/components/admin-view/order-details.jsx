@@ -1,46 +1,45 @@
-import { useState } from "react";
-import CommonForm from "../common/form";
 import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllOrdersForAdmin,
-  getOrderDetailsForAdmin,
-  updateOrderStatus,
-} from "@/store/admin/order-slice";
-import { useToast } from "../ui/use-toast";
+// import { useState } from "react";
+// import CommonForm from "../common/form";
+// import { useDispatch } from "react-redux";
+// import {
+//   getAllOrdersForAdmin,
+//   getOrderDetailsForAdmin,
+//   updateOrderStatus,
+// } from "@/store/admin/order-slice";
+// import { useToast } from "../ui/use-toast";
 
-const initialFormData = {
-  status: "",
-};
+// const initialFormData = {
+//   status: "",
+// };
 
 function AdminOrderDetailsView({ orderDetails }) {
-  const [formData, setFormData] = useState(initialFormData);
-  const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const { toast } = useToast();
+  // const [formData, setFormData] = useState(initialFormData);
+  // const dispatch = useDispatch();
+  // const { toast } = useToast();
 
   
 
-  function handleUpdateStatus(event) {
-    event.preventDefault();
-    const { status } = formData;
+  // function handleUpdateStatus(event) {
+  //   event.preventDefault();
+  //   const { status } = formData;
 
-    dispatch(
-      updateOrderStatus({ id: orderDetails?._id, orderStatus: status })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(getOrderDetailsForAdmin(orderDetails?._id));
-        dispatch(getAllOrdersForAdmin());
-        setFormData(initialFormData);
-        toast({
-          title: data?.payload?.message,
-        });
-      }
-    });
-  }
+  //   dispatch(
+  //     updateOrderStatus({ id: orderDetails?._id, orderStatus: status })
+  //   ).then((data) => {
+  //     if (data?.payload?.success) {
+  //       dispatch(getOrderDetailsForAdmin(orderDetails?._id));
+  //       dispatch(getAllOrdersForAdmin());
+  //       setFormData(initialFormData);
+  //       toast({
+  //         title: data?.payload?.message,
+  //       });
+  //     }
+  //   });
+  // }
 
   return (
     <DialogContent className="sm:max-w-[600px] max-h-[600px] overflow-y-scroll">
@@ -114,7 +113,7 @@ function AdminOrderDetailsView({ orderDetails }) {
           </div>
         </div>
 
-        <div>
+        {/* <div>
           <CommonForm
             formControls={[
               {
@@ -135,7 +134,7 @@ function AdminOrderDetailsView({ orderDetails }) {
             buttonText={"Update Order Status"}
             onSubmit={handleUpdateStatus}
           />
-        </div>
+        </div> */}
       </div>
     </DialogContent>
   );
